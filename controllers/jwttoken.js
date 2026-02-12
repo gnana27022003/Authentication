@@ -7,5 +7,9 @@ function generateToken(user){
     }
     return jwt.sign(payload,process.env.secret)
 }
+function verifyToken(token){
+   return jwt.verify(token,process.env.secret)
+}
 
-module.exports = {generateToken}
+
+module.exports = {generateToken,verifyToken}

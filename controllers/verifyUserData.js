@@ -1,4 +1,4 @@
-const {generateToken} = require('./auth')
+const {generateToken} = require('./jwttoken')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
@@ -8,14 +8,15 @@ const verifyUserData = async(req,res)=>{
         if(user){
             if(req.body.password === user.password){
                 const token = await generateToken(user);
-                res.json({
+                /*res.json({
                     "success": true,
                     "token":token,
                     "user":{
                         _id:user._id,
                         email:user.email
                     }
-                })
+                })*/
+               res.redirect('/home')
             }else{
                 res.json({
                     "success":false,

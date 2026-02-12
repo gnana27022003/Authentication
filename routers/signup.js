@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const{storeUserData} = require('../controllers/storeUserData')
-
+const {authMiddleware} = require('../middleware/authMiddleware')
 
 router.get('/signup',async(req,res)=>{
     res.render('signup',{
@@ -25,6 +25,10 @@ router.post('/signup',async(req,res)=>{
     }
 })
 
+
+router.get('/home',authMiddleware,async(req,res)=>{
+    res.render('home')
+})
 
 
 module.exports = router

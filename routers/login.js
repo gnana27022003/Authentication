@@ -9,7 +9,7 @@ router.get('/',async(req,res)=>{
 })
 
 router.post('/',async(req,res)=>{
-    await verifyUserData(req,res);
+    const result = await verifyUserData(req,res);
 })
 
 
