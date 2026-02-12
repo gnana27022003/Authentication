@@ -1,27 +1,29 @@
-const { verify } = require("jsonwebtoken");
-const { verifyToken } = require("../controllers/jwttoken");
+const { verifyToken } = require('../controllers/jwttoken')
 
-const authMiddleware = async(req,res,next)=>{
-    const authheader = req.headers.authorization;
-    if(authheader){
-        const harray = authheader.split(' ');
-        const token = harray[1];
-        const result = verifyToken(token)
-        if(result){
-            req.userId = result.userId;
-            next();
+const authMiddleware = (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization
+
+        if (!authHeader) {
+            return res.json({ message: "No token provided" })
         }
-        else{
-            res.json({
-                "message":"invalid TOKEN please try again"
-            })
+
+        const token = authHeader.split(" ")[1]
+
+        if (!token) {
+            return res.json({ message: "Invalid token format" })
         }
-    }
-    else{
-        res.json({
-            "message":"Authentication token is required"
-        })
+
+        const decoded = verifyToken(token)
+
+        req.userId = decoded.userId
+
+        next()
+
+    } catch (err) {
+        next(err)  
     }
 }
 
-module.exports={authMiddleware}
+
+module.exports = {authMiddleware}

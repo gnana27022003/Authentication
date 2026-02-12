@@ -22,10 +22,11 @@ app.use(express.static(path.join(__dirname,'views')))
 
 const login = require('./routers/login')
 const signup = require('./routers/signup')
-
+const {errorMiddleware} = require('./middleware/errorMiddleware')
 
 app.use(login)
 app.use(signup)
+app.use(errorMiddleware)
 
 
 app.listen(3004,()=>{

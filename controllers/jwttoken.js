@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const { errorMiddleware } = require('../middleware/errorMiddleware')
 
 
 function generateToken(user){
@@ -8,13 +9,10 @@ function generateToken(user){
     return jwt.sign(payload,process.env.secret)
 }
 function verifyToken(token){
-    try{
-        const jwtoken = jwt.verify(token,process.env.secret)
-        return jwtoken
-    }
-    catch(error){
-        console.log('INVALID TOKEN')
-    }
+    
+       return jwt.verify(token,process.env.secret)
+
+    
 }
 
 

@@ -4,6 +4,7 @@ const User = require('../models/user');
 const { verifyUserData } = require('../controllers/verifyUserData');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const { adminMiddleware } = require('../middleware/adminMiddleware');
+const { errorMiddleware } = require('../middleware/errorMiddleware');
 
 
 router.get('/',async(req,res)=>{

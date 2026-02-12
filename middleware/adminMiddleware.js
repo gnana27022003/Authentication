@@ -1,15 +1,25 @@
-const jwt = require('jsonwebtoken');
+
 const User = require('../models/user');
 
 const adminMiddleware = async(req,res,next)=>{
-    const user = await User.findOne({userId:req.userId})
-    if(user.role == 'admin'){
-        next();
+    try{
+        const user = await User.findOne({userId:req.userId})
+        if(!user){
+            res.json({
+                "message":"User not found"
+            })
+        }
+        if(user.role == 'admin'){
+            next();
+        }
+        else{
+            res.json({
+                "message":"Access Denied, Admins Only!!"
+            })
+        }
     }
-    else{
-        res.json({
-            "message":"Users not Allowed only Admins can access"
-        })
+    catch(err){
+       next(err)
     }
 }
 
