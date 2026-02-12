@@ -7,16 +7,16 @@ const verifyUserData = async(req,res)=>{
         const user = await User.findOne({email:req.body.email})
         if(user){
             if(req.body.password === user.password){
+                console.log("userId===========================================>",user.userId)
                 const token = await generateToken(user);
-                /*res.json({
+                res.json({
                     "success": true,
                     "token":token,
                     "user":{
-                        _id:user._id,
+                        userId:user.userId,
                         email:user.email
                     }
-                })*/
-               res.redirect('/home')
+                })
             }else{
                 res.json({
                     "success":false,
@@ -24,8 +24,9 @@ const verifyUserData = async(req,res)=>{
             }
 
         }else{
-            console.log('please enter email & password')
-            res.redirect('/')
+            res.json({
+                "message":"Invalid user please try again"
+            })
         }
     }
 }

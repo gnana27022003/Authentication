@@ -6,8 +6,9 @@ const authMiddleware = async(req,res,next)=>{
     if(authheader){
         const harray = authheader.split(' ');
         const token = harray[1];
-        const res = verifyToken(token)
-        if(res){
+        const result = verifyToken(token)
+        if(result){
+            req.userId = result.userId;
             next();
         }
         else{

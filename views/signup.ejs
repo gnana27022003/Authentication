@@ -3,6 +3,14 @@
     <div>
         <h1>SIGN UP FORM</h1>
         <form method="post" action="/signup">
+            Name:
+            <input type="text" name="name" required>
+            Role:
+            <select name="role">
+                <option >Select your role</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
             Email:
             <input type="text" name="email" required>
             Password:

@@ -19,7 +19,7 @@ router.post('/signup',async(req,res)=>{
     }
     else{
          res.json({
-           "success":true,
+           "success":false,
             "message":"signup failed"
         })
     }
