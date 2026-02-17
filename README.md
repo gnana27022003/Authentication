@@ -1,12 +1,11 @@
----
 
-# 🔐 Authentication & Authorization System (JWT + Role-Based Access)
+# Authentication and Authorization System (JWT + Role-Based Access)
 
-This application demonstrates secure **user authentication and authorization** using:
+This application demonstrates secure user authentication and authorization using:
 
-* **JWT (JSON Web Tokens)**
-* **Middleware for token verification**
-* **Role-based access control (User / Admin)**
+* JSON Web Tokens (JWT)
+* Middleware for token verification
+* Role-based access control (User / Admin)
 
 The system ensures:
 
@@ -16,7 +15,7 @@ The system ensures:
 
 ---
 
-## 📌 Base URL
+## Base URL
 
 ```
 http://localhost:3004
@@ -24,9 +23,9 @@ http://localhost:3004
 
 ---
 
-# 📝 1. User Registration (Signup)
+# 1. User Registration (Signup)
 
-## 🔹 GET `/signup`
+## GET /signup
 
 ### Purpose
 
@@ -40,20 +39,20 @@ GET /signup
 
 ### Behavior
 
-* Returns signup HTML page or endpoint confirmation.
-* No authentication required.
-* No request body required.
+* Returns signup HTML page or endpoint confirmation
+* No authentication required
+* No request body required
 
 ### Expected Responses
 
-| Status Code | Description                     |
-| ----------- | ------------------------------- |
-| 200 OK      | Signup route is available       |
-| 4xx         | Route not found / misconfigured |
+| Status Code | Description                      |
+| ----------- | -------------------------------- |
+| 200 OK      | Signup route is available        |
+| 4xx         | Route not found or misconfigured |
 
 ---
 
-## 🔹 POST `/signup`
+## POST /signup
 
 ### Purpose
 
@@ -72,7 +71,7 @@ POST /signup
   "name": "Test User",
   "email": "test@example.com",
   "password": "Password123",
-  "role": "admin" 
+  "role": "admin"
 }
 ```
 
@@ -80,12 +79,12 @@ POST /signup
 
 | Field    | Type   | Required | Description                 |
 | -------- | ------ | -------- | --------------------------- |
-| name     | String | ✅        | User full name              |
-| email    | String | ✅        | Unique email                |
-| password | String | ✅        | Account password            |
-| role     | String | ❌        | "user" (default) or "admin" |
+| name     | String | Yes      | User full name              |
+| email    | String | Yes      | Unique email                |
+| password | String | Yes      | Account password            |
+| role     | String | No       | "user" (default) or "admin" |
 
-> If role is not provided → defaults to **user**
+If role is not provided, it defaults to `user`.
 
 ### Authentication
 
@@ -93,17 +92,17 @@ Not required.
 
 ### Expected Responses
 
-| Status Code          | Description                       |
-| -------------------- | --------------------------------- |
-| 201 Created / 200 OK | User successfully registered      |
-| 400 Bad Request      | Missing fields / validation error |
-| 409 Conflict         | Email already exists              |
+| Status Code          | Description                        |
+| -------------------- | ---------------------------------- |
+| 201 Created / 200 OK | User successfully registered       |
+| 400 Bad Request      | Missing fields or validation error |
+| 409 Conflict         | Email already exists               |
 
 ---
 
-# 🔑 2. Login
+# 2. Login
 
-## 🔹 GET `/login`
+## GET /login
 
 ### Purpose
 
@@ -124,7 +123,7 @@ GET /login
 
 ---
 
-## 🔹 POST `/login`
+## POST /login
 
 ### Purpose
 
@@ -149,12 +148,12 @@ POST /login
 
 Not required.
 
-### Success Response (Example)
+### Success Response Example
 
 ```json
 {
   "message": "Login successful",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "token": "your_generated_jwt_token"
 }
 ```
 
@@ -166,17 +165,17 @@ Not required.
 | 401 Unauthorized | Invalid credentials       |
 | 400 Bad Request  | Missing fields            |
 
-⚠️ Save the returned JWT token for accessing protected routes.
+Save the returned JWT token to access protected routes.
 
 ---
 
-# 👤 3. User Profile (Protected Route)
+# 3. User Profile (Protected Route)
 
-## 🔹 GET `/api/auth/profile`
+## GET /api/auth/profile
 
 ### Purpose
 
-Fetch profile of authenticated user.
+Fetch profile information of the authenticated user.
 
 ### Method
 
@@ -186,13 +185,13 @@ GET /api/auth/profile
 
 ### Authentication Required
 
-Include JWT token in headers:
+Include JWT token in request headers:
 
 ```
 Authorization: Bearer <your_token>
 ```
 
-### Success Response (Example)
+### Success Response Example
 
 ```json
 {
@@ -205,17 +204,17 @@ Authorization: Bearer <your_token>
 
 ### Expected Responses
 
-| Status Code      | Description                              |
-| ---------------- | ---------------------------------------- |
-| 200 OK           | Returns user profile                     |
-| 401 Unauthorized | Invalid / missing token                  |
-| 403 Forbidden    | Token valid but insufficient permissions |
+| Status Code      | Description              |
+| ---------------- | ------------------------ |
+| 200 OK           | Returns user profile     |
+| 401 Unauthorized | Invalid or missing token |
+| 403 Forbidden    | Insufficient permissions |
 
 ---
 
-# 👑 4. Admin Dashboard (Role-Based Access)
+# 4. Admin Dashboard (Role-Based Access)
 
-## 🔹 GET `/api/admin/dashboard`
+## GET /api/admin/dashboard
 
 ### Purpose
 
@@ -235,13 +234,14 @@ Authorization: Bearer <admin_token>
 
 ### Access Control
 
-* ✅ Accessible only if:
+Accessible only if:
 
-  * Token is valid
-  * User role = `admin`
-* ❌ Regular users will be denied access.
+* Token is valid
+* User role is `admin`
 
-### Success Response
+Regular users will be denied access.
+
+### Success Response Example
 
 ```json
 {
@@ -252,54 +252,51 @@ Authorization: Bearer <admin_token>
 
 ### Expected Responses
 
-| Status Code      | Description             |
-| ---------------- | ----------------------- |
-| 200 OK           | Admin access granted    |
-| 401 Unauthorized | Invalid / missing token |
-| 403 Forbidden    | Not an admin            |
+| Status Code      | Description              |
+| ---------------- | ------------------------ |
+| 200 OK           | Admin access granted     |
+| 401 Unauthorized | Invalid or missing token |
+| 403 Forbidden    | Not an admin             |
 
 ---
 
-# 🔐 Security Flow Summary
+# Security Flow Summary
 
-### 1️⃣ Register
+1. Register
+   User signs up and data is stored in database.
 
-User signs up → stored in database.
+2. Login
+   Server verifies credentials and generates JWT.
 
-### 2️⃣ Login
+3. Access Protected Routes
+   Client sends JWT in Authorization header.
 
-User logs in → server verifies credentials → generates JWT.
+4. Middleware Verification
 
-### 3️⃣ Access Protected Routes
-
-Client sends JWT in Authorization header.
-
-### 4️⃣ Middleware Verification
-
-* Verify token validity
-* Decode user information
-* Check role (if required)
+   * Verifies token validity
+   * Decodes user information
+   * Checks role when required
 
 ---
 
-# 🛡 Middleware Responsibilities
+# Middleware Responsibilities
 
-### Authentication Middleware
+## Authentication Middleware
 
 * Extract token from header
-* Verify using secret key
+* Verify token using secret key
 * Attach user data to request object
 
-### Authorization Middleware
+## Authorization Middleware
 
 * Check user role
 * Allow or deny access based on role
 
 ---
 
-# 🚀 Features Implemented
+# Features Implemented
 
-* JWT Authentication
+* JWT-based authentication
 * Password validation
 * Role-based access control
 * Protected routes
@@ -307,15 +304,15 @@ Client sends JWT in Authorization header.
 
 ---
 
-# 📂 Example Headers for Protected Requests
+# Example Header for Protected Requests
 
 ```
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Authorization: Bearer your_jwt_token
 ```
 
 ---
 
-# 🧠 Key Concepts Demonstrated
+# Key Concepts Demonstrated
 
 * Stateless authentication
 * Secure token handling
@@ -323,4 +320,3 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 * Middleware-based route protection
 
 ---
-
