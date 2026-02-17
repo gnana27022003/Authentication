@@ -246,8 +246,10 @@ Regular users will be denied access.
 
 ```json
 {
-  "message": "Welcome Admin",
-  "data": "Admin protected content"
+    "User ID": "xxxxxxxxxxxxxxxxxxxxxxxx",
+    "name": "xxxxxxxxxxx",
+    "email": "xxxxxxxxxxx@gmail.com",
+    "role": "admin"
 }
 ```
 
@@ -274,7 +276,7 @@ Regular users will be denied access.
 4. Middleware Verification
 
    * Verifies token validity
-   * Decodes user information
+   * Handles Errors
    * Checks role when required
 
 ---
@@ -292,6 +294,8 @@ Regular users will be denied access.
 * Check user role
 * Allow or deny access based on role
 
+## Error Middleware
+* Handles the error to make the error look, read, understand easily
 ---
 
 # Features Implemented
@@ -300,7 +304,6 @@ Regular users will be denied access.
 * Password validation
 * Role-based access control
 * Protected routes
-* Admin-only dashboard
 
 ---
 
