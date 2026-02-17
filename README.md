@@ -1,199 +1,131 @@
-Authentication
-This Authentication application explores the user authentcation and authorization using JWT tokens and middleware functions to ensure proper security and access of the web application.
 
-﻿
+## Authentication APIThis document describes the authentication-related endpoints of the application.  These endpoints are grouped in the **Authentication** Postman collection.Typical usage flow:1. `POST /signup` – Create a new user account2. `POST /login` – Log in and obtain an access token or session3. `GET /profile` – Fetch the currently authenticated user’s profile4. `GET /admin` – Test access to an admin-only route---### Base URL```texthttp://localhost:3000
+Update the base URL to match your environment (development, staging, production).
 
-Register
-This route helps to get the signup and post the signup details to get registered as the user
+1. GET /signup
+Retrieve the signup page or verify that the signup endpoint is available.
 
-﻿
-
-GET
-get-signup
-http://localhost:3004/signup
-Purpose
-Retrieve the signup page or signup endpoint to verify that the route is accessible. This is typically used by the frontend to display the signup form to the user.
-
-Method & URL
 Method: GET
-URL: /signup (or the actual signup page URL)
-Behavior
+URL: /signup
+
+Description
 Returns the signup page (HTML) or basic metadata about the signup endpoint.
-No request body is required.
-Usually does not require authentication.
-Expected Responses
+Typically used by the frontend to display the signup form.
+Does not require authentication.
+Request
+No request body.
+No special headers required (unless your app specifies otherwise).
+Responses
 200 OK – Signup page/endpoint is available.
 4xx – Route not found or misconfigured.
-﻿
+2. POST /signup
+Create a new user account.
 
-POST
-post-signup
-http://localhost:3004/signup
-Purpose
-Create a new user account by sending signup details (e.g., name, email, password) to the server.
-
-Method & URL
 Method: POST
 URL: /signup
+(or your actual endpoint, e.g. /api/auth/signup)
+
 Request Body
-The request body contains the user details required for registration. Examples:
+Depending on how your backend is implemented, the signup data might be sent as JSON or form data.
 
-If JSON:
+JSON example
+{    "name": "Test User",    "email": "test@example.com",    "password": "Password123",    "confirmPassword": "Password123"}
+Form data / x-www-form-urlencoded example
+Field	Type	Description
+name	string	User’s full name
+email	string	User’s email address
+password	string	Account password
+confirmPassword	string	Password confirmation (if needed)
+Adjust the field names to match your server code.
 
-JSON
-{ 
-  "name": "Test User",
-  "email": "test@example.com",
-  "password": "Password123",
-   "role": "admin"  //or user
-}
-If form-data / x-www-form-urlencoded:
-
-name – User’s full name
-email – User’s email address
-password – Account password
-role – user(default) or admin (if admin mention explicitly)
 Authentication
-Usually no authentication is required for signup.
-Expected Responses
-201 Created / 200 OK – User has been successfully registered.
-Response may include the created user object and/or a success message.
-4xx – Route not found or misconfigured.
-﻿
+No authentication required.
+Responses
+201 Created or 200 OK – User registered successfully.
+May return a user object and/or success message.
+400 Bad Request – Validation error (e.g. missing fields, invalid email, weak password).
+409 Conflict – Email already exists (if implemented).
+3. GET /login
+Retrieve the login page or check that the login route is working.
 
-Body
-raw (json)
-json
-{
-    "name":"Gnana Sree",
-    "email":"gnanasreeu@gmail.com",
-    "password":"12345"
-}
-Login
-Login route helps the user to login and get the JWT token that is generated when the user logins with correct credentials
-
-﻿
-
-GET
-get-login
-http://localhost:3004
-Purpose
-Retrieve the login page or verify that the login route is accessible.
-
-Method & URL
 Method: GET
-URL: /login (or the actual login page URL)
-Behavior
-Returns the login page (HTML) or basic information about the login endpoint.
-No request body is required.
-Typically does not require authentication.
-Expected Responses
+URL: /login
+
+Description
+Returns the login page (HTML) or metadata about the login endpoint.
+Typically used by the frontend to display the login form.
+Does not require authentication.
+Request
+No request body.
+Responses
 200 OK – Login page/endpoint is available.
 4xx – Route not found or misconfigured.
-﻿
+4. POST /login
+Authenticate a user with email and password.
 
-POST
-post-login
-http://localhost:3004/
-Purpose
-Authenticate a user with their credentials and (usually) return a JWT access token.
-
-Method & URL
 Method: POST
-URL: /
+URL: /login
+(or your actual endpoint, e.g. /api/auth/login)
+
 Request Body
-Contains the user’s login credentials. Examples:
-
-If JSON:
-
-JSON
-{    
-"email": "test@example.com", 
-"password": "Password123"
-}
-If form-data / x-www-form-urlencoded:
-
-email – Registered email address
-password – Account password
+JSON example
+{    "email": "test@example.com",    "password": "Password123"}
+Form data / x-www-form-urlencoded example
+Field	Type	Description
+email	string	Registered email address
+password	string	Account password
 Authentication
-No token is required for this request.
-On success, the response typically returns:
-A JWT or access token (e.g. token field)
-Expected Responses
-200 OK – Authentication successful.
-Save the returned token (if any) to use in subsequent authenticated requests (e.g. get-profile, get-admin-route).
-401 Unauthorized / 400 Bad Request – Invalid credentials or missing fields.
-﻿
+No token required to call this endpoint.
+On success, the server typically:
+Returns a JWT/access token, e.g.
+{    "token": "eyJhbGciOi..."}
+Or sets a session cookie.
+Responses
+200 OK – Login successful.
+400 Bad Request or 401 Unauthorized – Invalid credentials or missing fields.
+5. GET /profile
+Fetch the current authenticated user’s profile.
 
-Body
-raw (json)
-json
-{
-    "email":"nalambhavana@gmail.com",
-    "password":"12345"
-}
-Profile
-Profile route helps to get the user information for authenticated users by verifying the JWT token provided at authorization bearer
-
-GET
-get-profile
-http://localhost:3004/api/auth/profile
-Purpose
-Fetch the profile information of the currently authenticated user.
-
-Method & URL
 Method: GET
-URL: /api/auth/profile)
+URL: /profile
+(or your actual endpoint, e.g. /api/user/me)
+
 Authentication
-This endpoint usually requires a valid token or session. Common patterns:
+This endpoint normally requires a valid token or session.
 
-Bearer token in header:
+Bearer token header example:
 
-Plain Text
+Authorization: Bearer <your_token_here>
+If you’re using Postman, you can store the token in a variable (e.g. {{token}}) and send:
+
 Authorization: Bearer {{token}}
-(where {{token}} is set after a successful post-login response)
+Responses
+200 OK – Returns the user profile JSON, e.g.
+{    "id": "123",    "name": "Test User",    "email": "test@example.com",    "role": "user"}
+401 Unauthorized – Missing or invalid token.
+403 Forbidden – Token is valid but user is not allowed to access this resource (less common for basic profiles).
+6. GET /admin
+Check access to an admin-only route.
 
-Behavior
-Returns details about the currently logged-in user (id, email, name, roles, etc.).
-Expected Responses
-200 OK – Returns the user profile JSON.
-﻿
-
-Authorization
-Bearer Token
-Token
-<token>
-Body
-raw (text)
-text
-{
-    "email":"nalambhavana@gmail.com",
-    "password":"12345"
-}
-Admin Dashboard
-Admin route gives access to only admins by verifying the JWT token and also their role allowing role based access experience for the user
-
-GET
-get-admin-route
-http://localhost:3004/api/admin/dashboard
-Purpose
-Test access to an admin-only endpoint to verify authorization and role-based access control.
-
-Method & URL
 Method: GET
-URL: /api/admin/dashboard
-Authentication
-Requires a valid token / session from post-login.
-Only users with admin privileges (role, permission) are expected to access this successfully.
-Typical header:
+URL: /admin
+(or your actual endpoint, e.g. /api/admin/dashboard)
 
-Plain Text
-Authorization: Bearer {{token}}
-Expected Responses
-200 OK – Current user has admin access; returns admin-protected data.
-﻿
+Authentication & Authorization
+Requires a valid authenticated user, usually with an admin role or similar.
+Typically uses the same token as the profile endpoint.
+Header example:
 
-Authorization
-Bearer Token
-Token
-<token>
+Authorization: Bearer <your_token_here>
+Responses
+200 OK – User is authenticated and has admin rights. Returns admin-only data.
+403 Forbidden – User is authenticated but not an admin.
+401 Unauthorized – Missing or invalid token.
+Using the Postman Collection
+You can find the Postman collection named “Authentication” in your workspace.
+The typical workflow in Postman:
+
+Call POST /signup with a new user.
+Call POST /login with the same credentials and capture the returned token.
+Set the token as a variable in Postman (e.g. {{token}}).
+Call GET /profile and GET /admin with the Authorization: Bearer {{token}} header.
