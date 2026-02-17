@@ -95,8 +95,7 @@ Not required.
 | Status Code          | Description                        |
 | -------------------- | ---------------------------------- |
 | 201 Created / 200 OK | User successfully registered       |
-| 400 Bad Request      | Missing fields or validation error |
-| 409 Conflict         | Email already exists               |
+| 4xx                  | Route not found or misconfigured   |
 
 ---
 
@@ -152,18 +151,21 @@ Not required.
 
 ```json
 {
-  "message": "Login successful",
-  "token": "your_generated_jwt_token"
+    "success": true,
+    "token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "user": {
+        "userId": "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "email": "xxxxxxxxxxxxxxxx@gmail.com"
+    }
 }
 ```
 
 ### Expected Responses
 
-| Status Code      | Description               |
-| ---------------- | ------------------------- |
-| 200 OK           | Authentication successful |
-| 401 Unauthorized | Invalid credentials       |
-| 400 Bad Request  | Missing fields            |
+| Status Code      | Description                      |
+| ---------------- | -------------------------        |
+| 200 OK           | Authentication successful        |
+| 4xx              | Route not found or misconfigured |
 
 Save the returned JWT token to access protected routes.
 
@@ -204,11 +206,10 @@ Authorization: Bearer <your_token>
 
 ### Expected Responses
 
-| Status Code      | Description              |
-| ---------------- | ------------------------ |
-| 200 OK           | Returns user profile     |
-| 401 Unauthorized | Invalid or missing token |
-| 403 Forbidden    | Insufficient permissions |
+| Status Code      | Description                      |
+| ---------------- | -------------------------------- |
+| 200 OK           | Returns user profile             |
+| 4xx              | Route not found or misconfigured |
 
 ---
 
@@ -255,8 +256,7 @@ Regular users will be denied access.
 | Status Code      | Description              |
 | ---------------- | ------------------------ |
 | 200 OK           | Admin access granted     |
-| 401 Unauthorized | Invalid or missing token |
-| 403 Forbidden    | Not an admin             |
+
 
 ---
 
@@ -307,7 +307,7 @@ Regular users will be denied access.
 # Example Header for Protected Requests
 
 ```
-Authorization: Bearer your_jwt_token
+Authorization: Bearer <your_jwt_token>
 ```
 
 ---
