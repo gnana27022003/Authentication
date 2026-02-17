@@ -1,131 +1,326 @@
+---
 
-## Authentication APIThis document describes the authentication-related endpoints of the application.  These endpoints are grouped in the **Authentication** Postman collection.Typical usage flow:1. `POST /signup` – Create a new user account2. `POST /login` – Log in and obtain an access token or session3. `GET /profile` – Fetch the currently authenticated user’s profile4. `GET /admin` – Test access to an admin-only route---### Base URL```texthttp://localhost:3000
-Update the base URL to match your environment (development, staging, production).
+# 🔐 Authentication & Authorization System (JWT + Role-Based Access)
 
-1. GET /signup
-Retrieve the signup page or verify that the signup endpoint is available.
+This application demonstrates secure **user authentication and authorization** using:
 
-Method: GET
-URL: /signup
+* **JWT (JSON Web Tokens)**
+* **Middleware for token verification**
+* **Role-based access control (User / Admin)**
 
-Description
-Returns the signup page (HTML) or basic metadata about the signup endpoint.
-Typically used by the frontend to display the signup form.
-Does not require authentication.
-Request
-No request body.
-No special headers required (unless your app specifies otherwise).
-Responses
-200 OK – Signup page/endpoint is available.
-4xx – Route not found or misconfigured.
-2. POST /signup
+The system ensures:
+
+* Secure registration and login
+* Protected profile routes
+* Admin-only dashboard access
+
+---
+
+## 📌 Base URL
+
+```
+http://localhost:3004
+```
+
+---
+
+# 📝 1. User Registration (Signup)
+
+## 🔹 GET `/signup`
+
+### Purpose
+
+Retrieve the signup page or verify that the signup route is accessible.
+
+### Method
+
+```
+GET /signup
+```
+
+### Behavior
+
+* Returns signup HTML page or endpoint confirmation.
+* No authentication required.
+* No request body required.
+
+### Expected Responses
+
+| Status Code | Description                     |
+| ----------- | ------------------------------- |
+| 200 OK      | Signup route is available       |
+| 4xx         | Route not found / misconfigured |
+
+---
+
+## 🔹 POST `/signup`
+
+### Purpose
+
 Create a new user account.
 
-Method: POST
-URL: /signup
-(or your actual endpoint, e.g. /api/auth/signup)
+### Method
 
-Request Body
-Depending on how your backend is implemented, the signup data might be sent as JSON or form data.
+```
+POST /signup
+```
 
-JSON example
-{    "name": "Test User",    "email": "test@example.com",    "password": "Password123",    "confirmPassword": "Password123"}
-Form data / x-www-form-urlencoded example
-Field	Type	Description
-name	string	User’s full name
-email	string	User’s email address
-password	string	Account password
-confirmPassword	string	Password confirmation (if needed)
-Adjust the field names to match your server code.
+### Request Body (JSON)
 
-Authentication
-No authentication required.
-Responses
-201 Created or 200 OK – User registered successfully.
-May return a user object and/or success message.
-400 Bad Request – Validation error (e.g. missing fields, invalid email, weak password).
-409 Conflict – Email already exists (if implemented).
-3. GET /login
-Retrieve the login page or check that the login route is working.
+```json
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "password": "Password123",
+  "role": "admin" 
+}
+```
 
-Method: GET
-URL: /login
+### Fields
 
-Description
-Returns the login page (HTML) or metadata about the login endpoint.
-Typically used by the frontend to display the login form.
-Does not require authentication.
-Request
-No request body.
-Responses
-200 OK – Login page/endpoint is available.
-4xx – Route not found or misconfigured.
-4. POST /login
-Authenticate a user with email and password.
+| Field    | Type   | Required | Description                 |
+| -------- | ------ | -------- | --------------------------- |
+| name     | String | ✅        | User full name              |
+| email    | String | ✅        | Unique email                |
+| password | String | ✅        | Account password            |
+| role     | String | ❌        | "user" (default) or "admin" |
 
-Method: POST
-URL: /login
-(or your actual endpoint, e.g. /api/auth/login)
+> If role is not provided → defaults to **user**
 
-Request Body
-JSON example
-{    "email": "test@example.com",    "password": "Password123"}
-Form data / x-www-form-urlencoded example
-Field	Type	Description
-email	string	Registered email address
-password	string	Account password
-Authentication
-No token required to call this endpoint.
-On success, the server typically:
-Returns a JWT/access token, e.g.
-{    "token": "eyJhbGciOi..."}
-Or sets a session cookie.
-Responses
-200 OK – Login successful.
-400 Bad Request or 401 Unauthorized – Invalid credentials or missing fields.
-5. GET /profile
-Fetch the current authenticated user’s profile.
+### Authentication
 
-Method: GET
-URL: /profile
-(or your actual endpoint, e.g. /api/user/me)
+Not required.
 
-Authentication
-This endpoint normally requires a valid token or session.
+### Expected Responses
 
-Bearer token header example:
+| Status Code          | Description                       |
+| -------------------- | --------------------------------- |
+| 201 Created / 200 OK | User successfully registered      |
+| 400 Bad Request      | Missing fields / validation error |
+| 409 Conflict         | Email already exists              |
 
-Authorization: Bearer <your_token_here>
-If you’re using Postman, you can store the token in a variable (e.g. {{token}}) and send:
+---
 
-Authorization: Bearer {{token}}
-Responses
-200 OK – Returns the user profile JSON, e.g.
-{    "id": "123",    "name": "Test User",    "email": "test@example.com",    "role": "user"}
-401 Unauthorized – Missing or invalid token.
-403 Forbidden – Token is valid but user is not allowed to access this resource (less common for basic profiles).
-6. GET /admin
-Check access to an admin-only route.
+# 🔑 2. Login
 
-Method: GET
-URL: /admin
-(or your actual endpoint, e.g. /api/admin/dashboard)
+## 🔹 GET `/login`
 
-Authentication & Authorization
-Requires a valid authenticated user, usually with an admin role or similar.
-Typically uses the same token as the profile endpoint.
-Header example:
+### Purpose
 
-Authorization: Bearer <your_token_here>
-Responses
-200 OK – User is authenticated and has admin rights. Returns admin-only data.
-403 Forbidden – User is authenticated but not an admin.
-401 Unauthorized – Missing or invalid token.
-Using the Postman Collection
-You can find the Postman collection named “Authentication” in your workspace.
-The typical workflow in Postman:
+Retrieve login page or verify login route accessibility.
 
-Call POST /signup with a new user.
-Call POST /login with the same credentials and capture the returned token.
-Set the token as a variable in Postman (e.g. {{token}}).
-Call GET /profile and GET /admin with the Authorization: Bearer {{token}} header.
+### Method
+
+```
+GET /login
+```
+
+### Expected Responses
+
+| Status Code | Description           |
+| ----------- | --------------------- |
+| 200 OK      | Login route available |
+| 4xx         | Route misconfigured   |
+
+---
+
+## 🔹 POST `/login`
+
+### Purpose
+
+Authenticate user and generate JWT token.
+
+### Method
+
+```
+POST /login
+```
+
+### Request Body (JSON)
+
+```json
+{
+  "email": "test@example.com",
+  "password": "Password123"
+}
+```
+
+### Authentication
+
+Not required.
+
+### Success Response (Example)
+
+```json
+{
+  "message": "Login successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### Expected Responses
+
+| Status Code      | Description               |
+| ---------------- | ------------------------- |
+| 200 OK           | Authentication successful |
+| 401 Unauthorized | Invalid credentials       |
+| 400 Bad Request  | Missing fields            |
+
+⚠️ Save the returned JWT token for accessing protected routes.
+
+---
+
+# 👤 3. User Profile (Protected Route)
+
+## 🔹 GET `/api/auth/profile`
+
+### Purpose
+
+Fetch profile of authenticated user.
+
+### Method
+
+```
+GET /api/auth/profile
+```
+
+### Authentication Required
+
+Include JWT token in headers:
+
+```
+Authorization: Bearer <your_token>
+```
+
+### Success Response (Example)
+
+```json
+{
+  "id": "123456",
+  "name": "Test User",
+  "email": "test@example.com",
+  "role": "user"
+}
+```
+
+### Expected Responses
+
+| Status Code      | Description                              |
+| ---------------- | ---------------------------------------- |
+| 200 OK           | Returns user profile                     |
+| 401 Unauthorized | Invalid / missing token                  |
+| 403 Forbidden    | Token valid but insufficient permissions |
+
+---
+
+# 👑 4. Admin Dashboard (Role-Based Access)
+
+## 🔹 GET `/api/admin/dashboard`
+
+### Purpose
+
+Access admin-only protected route.
+
+### Method
+
+```
+GET /api/admin/dashboard
+```
+
+### Authentication Required
+
+```
+Authorization: Bearer <admin_token>
+```
+
+### Access Control
+
+* ✅ Accessible only if:
+
+  * Token is valid
+  * User role = `admin`
+* ❌ Regular users will be denied access.
+
+### Success Response
+
+```json
+{
+  "message": "Welcome Admin",
+  "data": "Admin protected content"
+}
+```
+
+### Expected Responses
+
+| Status Code      | Description             |
+| ---------------- | ----------------------- |
+| 200 OK           | Admin access granted    |
+| 401 Unauthorized | Invalid / missing token |
+| 403 Forbidden    | Not an admin            |
+
+---
+
+# 🔐 Security Flow Summary
+
+### 1️⃣ Register
+
+User signs up → stored in database.
+
+### 2️⃣ Login
+
+User logs in → server verifies credentials → generates JWT.
+
+### 3️⃣ Access Protected Routes
+
+Client sends JWT in Authorization header.
+
+### 4️⃣ Middleware Verification
+
+* Verify token validity
+* Decode user information
+* Check role (if required)
+
+---
+
+# 🛡 Middleware Responsibilities
+
+### Authentication Middleware
+
+* Extract token from header
+* Verify using secret key
+* Attach user data to request object
+
+### Authorization Middleware
+
+* Check user role
+* Allow or deny access based on role
+
+---
+
+# 🚀 Features Implemented
+
+* JWT Authentication
+* Password validation
+* Role-based access control
+* Protected routes
+* Admin-only dashboard
+
+---
+
+# 📂 Example Headers for Protected Requests
+
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+---
+
+# 🧠 Key Concepts Demonstrated
+
+* Stateless authentication
+* Secure token handling
+* Role-based access control
+* Middleware-based route protection
+
+---
+
