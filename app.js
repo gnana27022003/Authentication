@@ -20,12 +20,11 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.use(express.static(path.join(__dirname,'views')))
 
-const login = require('./routers/login')
-const signup = require('./routers/signup')
+const router = require('./routers/router')
 const {errorMiddleware} = require('./middleware/errorMiddleware')
 
-app.use(login)
-app.use(signup)
+app.use(router)
+
 app.use(errorMiddleware)
 
 
